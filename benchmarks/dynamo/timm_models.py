@@ -105,7 +105,7 @@ def refresh_model_names():
         for fn in glob.glob("../pytorch-image-models/docs/models/*.md"):
             with open(fn) as f:
                 while True:
-                    line = f.readline()
+                    line = f.readline(5_000_000)
                     if not line:
                         break
                     if not line.startswith("model = timm.create_model("):

@@ -22,7 +22,7 @@ def sparse_grad_output(a, b):
 
 def read_matrix_params(path):
     with open(path) as file:
-        line = file.readline()
+        line = file.readline(5_000_000)
         nrows, ncols, nnz = (int(el) for el in line.split(", "))
         return (nrows, ncols), nnz
 
