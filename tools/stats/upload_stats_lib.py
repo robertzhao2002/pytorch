@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 import boto3  # type: ignore[import]
-import requests
 import rockset  # type: ignore[import]
+from security import safe_requests
 
 PYTORCH_REPO = "https://api.github.com/repos/pytorch/pytorch"
 S3_RESOURCE = boto3.resource("s3")
@@ -30,13 +30,11 @@ def _get_request_headers() -> Dict[str, str]:
 
 def _get_artifact_urls(prefix: str, workflow_run_id: int) -> Dict[Path, str]:
     """Get all workflow artifacts with 'test-report' in the name."""
-    response = requests.get(
-        f"{PYTORCH_REPO}/actions/runs/{workflow_run_id}/artifacts?per_page=100",
+    response = safe_requests.get(f"{PYTORCH_REPO}/actions/runs/{workflow_run_id}/artifacts?per_page=100",
     )
     artifacts = response.json()["artifacts"]
     while "next" in response.links.keys():
-        response = requests.get(
-            response.links["next"]["url"], headers=_get_request_headers()
+        response = safe_requests.get(response.links["next"]["url"], headers=_get_request_headers()
         )
         artifacts.extend(response.json()["artifacts"])
 
@@ -69,7 +67,7 @@ def _download_artifact(
 
     print(f"Downloading {artifact_name}")
 
-    response = requests.get(artifact_url, headers=_get_request_headers())
+    response = safe_requests.get(artifact_url, headers=_get_request_headers())
     with open(artifact_name, "wb") as f:
         f.write(response.content)
     return artifact_name
