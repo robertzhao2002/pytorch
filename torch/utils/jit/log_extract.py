@@ -1,9 +1,9 @@
 from contextlib import contextmanager
 from typing import Any, List, Tuple, cast
-import random
 import torch
 import time
 from torch.utils.benchmark import Timer
+import secrets
 
 def extract_ir(filename: str) -> List[str]:
     BEGIN = "<GRAPH_EXPORT>"
@@ -44,14 +44,14 @@ def load_graph_and_inputs(ir: str) -> Tuple[Any, List[Any]]:
     inputs = []
     for inp in graph.inputs():
         if isinstance(inp.type(), torch._C.FloatType):
-            inputs.append(random.uniform(.1, 100))
+            inputs.append(secrets.SystemRandom().uniform(.1, 100))
         elif isinstance(inp.type(), torch._C.IntType):
-            inputs.append(random.randint(1, 100))
+            inputs.append(secrets.SystemRandom().randint(1, 100))
         elif isinstance(inp.type(), torch._C.TensorType):
             tensorType = cast(torch._C.TensorType, inp.type())
             inputs.append(make_tensor_from_type(tensorType))
         elif isinstance(inp.type(), torch._C.BoolType):
-            inputs.append(random.randint(0, 1) == 1)
+            inputs.append(secrets.SystemRandom().randint(0, 1) == 1)
         else:
             raise NotImplementedError(f"A default value is not implemented for type {inp.type()}")
 

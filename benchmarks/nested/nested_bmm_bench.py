@@ -1,7 +1,7 @@
 import argparse
-import random
 
 import torch
+import secrets
 
 
 def bench(nt_a, nt_b, niter):
@@ -22,7 +22,7 @@ def bench(nt_a, nt_b, niter):
 
 def sweep_n(niter, dtype):
     for ntensor in [4, 8, 16, 32, 64, 128, 256]:
-        tensors = [torch.randn(256, random.randint(100, 200)) for t in range(ntensor)]
+        tensors = [torch.randn(256, secrets.SystemRandom().randint(100, 200)) for t in range(ntensor)]
         nt_a = torch.nested.nested_tensor(
             tensors,
             dtype=dtype,
@@ -54,7 +54,7 @@ def sweep_n(niter, dtype):
 
 
 if __name__ == "__main__":
-    random.seed(123)
+    secrets.SystemRandom().seed(123)
     parser = argparse.ArgumentParser(description="Nested Tensor BMM Benchmark")
     parser.add_argument("--niter", default="10", type=int)
 

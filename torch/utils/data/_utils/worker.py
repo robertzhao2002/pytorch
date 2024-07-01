@@ -5,13 +5,14 @@ static methods.
 """
 
 import torch
-import random
 import os
 import queue
 from dataclasses import dataclass
 from torch._utils import ExceptionWrapper
 from typing import Optional, Union, TYPE_CHECKING
 from . import signal_handling, MP_STATUS_CHECK_INTERVAL, IS_WINDOWS, HAS_NUMPY
+import secrets
+
 if TYPE_CHECKING:
     from torch.utils.data import Dataset
 
@@ -221,7 +222,7 @@ def _worker_loop(dataset_kind, dataset, index_queue, data_queue, done_event,
 
         torch.set_num_threads(1)
         seed = base_seed + worker_id
-        random.seed(seed)
+        secrets.SystemRandom().seed(seed)
         torch.manual_seed(seed)
         if HAS_NUMPY:
             np_seed = _generate_state(base_seed, worker_id)

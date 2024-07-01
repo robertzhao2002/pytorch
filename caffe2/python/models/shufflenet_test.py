@@ -10,6 +10,7 @@ import hypothesis.strategies as st
 from hypothesis import given, settings
 import caffe2.python.hypothesis_test_util as hu
 import caffe2.python.models.imagenet_trainer_test_utils as utils
+import secrets
 
 
 class ShufflenetMemongerTest(hu.HypothesisTestCase):
@@ -50,8 +51,7 @@ class ShufflenetMemongerTest(hu.HypothesisTestCase):
 
 if __name__ == "__main__":
     import unittest
-    import random
-    random.seed(2006)
+    secrets.SystemRandom().seed(2006)
     # pyre-fixme[10]: Name `workspace` is used but not defined in the current scope
     workspace.GlobalInit([
         'caffe2',
