@@ -1,12 +1,12 @@
 import subprocess
 
 import click
+from security import safe_command
 
 
 def test(cmd, limit):
     print(f"Testing PYTORCH_JIT_OPT_LIMIT=tensorexpr_fuser={limit} {cmd}")
-    p = subprocess.run(
-        f"PYTORCH_JIT_OPT_LIMIT=tensorexpr_fuser={limit} {cmd}",
+    p = safe_command.run(subprocess.run, f"PYTORCH_JIT_OPT_LIMIT=tensorexpr_fuser={limit} {cmd}",
         shell=True,
         capture_output=True,
         encoding="utf-8",

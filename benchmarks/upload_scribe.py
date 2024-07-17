@@ -14,6 +14,7 @@ import time
 from collections import defaultdict
 
 import requests
+from security import safe_command
 
 
 class ScribeUploader:
@@ -40,7 +41,7 @@ class ScribeUploader:
         for m in messages:
             json_str = json.dumps(m)
             cmd = ["scribe_cat", self.category, json_str]
-            subprocess.run(cmd)
+            safe_command.run(subprocess.run, cmd)
 
     def upload(self, messages):
         if os.environ.get("SCRIBE_INTERN"):
