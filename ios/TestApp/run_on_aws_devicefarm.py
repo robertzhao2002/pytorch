@@ -77,7 +77,7 @@ def upload_file(
 
     with open(filename, "rb") as file_stream:
         print(f"Uploading {filename} to Device Farm as {upload_name}...")
-        r = requests.put(upload_url, data=file_stream, headers={"content-type": mime})
+        r = requests.put(upload_url, data=file_stream, headers={"content-type": mime}, timeout=60)
         if not r.ok:
             raise Exception(f"Couldn't upload {filename}: {r.reason}")
 

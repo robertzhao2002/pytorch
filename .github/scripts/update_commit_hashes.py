@@ -23,19 +23,19 @@ def git_api(
             f"https://api.github.com{url}",
             data=json.dumps(params),
             headers=headers,
-        ).json()
+        timeout=60).json()
     elif type == "patch":
         return requests.patch(
             f"https://api.github.com{url}",
             data=json.dumps(params),
             headers=headers,
-        ).json()
+        timeout=60).json()
     else:
         return requests.get(
             f"https://api.github.com{url}",
             params=params,
             headers=headers,
-        ).json()
+        timeout=60).json()
 
 
 def parse_args() -> Any:

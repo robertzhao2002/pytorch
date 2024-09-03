@@ -47,7 +47,7 @@ def query_job_sha(repo, sha):
         ]
     }
 
-    r = requests.post(url=ARTIFACTS_QUERY_URL, json=params)
+    r = requests.post(url=ARTIFACTS_QUERY_URL, json=params, timeout=60)
     data = r.json()
     return data["results"]
 

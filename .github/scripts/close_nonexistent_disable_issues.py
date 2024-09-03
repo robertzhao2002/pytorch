@@ -84,7 +84,7 @@ def query_rockset(
 
 def download_log_worker(temp_dir: str, id: int, name: str) -> None:
     url = f"https://ossci-raw-job-status.s3.amazonaws.com/log/{id}"
-    data = requests.get(url).text
+    data = requests.get(url, timeout=60).text
     with open(f"{temp_dir}/{name.replace('/', '_')} {id}.txt", "x") as f:
         f.write(data)
 
@@ -103,12 +103,12 @@ def close_issue(num: int) -> None:
         f"https://api.github.com/repos/pytorch/pytorch/issues/{num}/comments",
         data=json.dumps({"body": CLOSING_COMMENT}),
         headers=headers,
-    )
+    timeout=60)
     requests.patch(
         f"https://api.github.com/repos/pytorch/pytorch/issues/{num}",
         data=json.dumps({"state": "closed"}),
         headers=headers,
-    )
+    timeout=60)
 
 
 def check_if_exists(
@@ -147,7 +147,7 @@ def check_if_exists(
 
 if __name__ == "__main__":
     args = parse_args()
-    disabled_tests_json = json.loads(requests.get(DISABLED_TESTS_JSON).text)
+    disabled_tests_json = json.loads(requests.get(DISABLED_TESTS_JSON, timeout=60).text)
 
     all_logs = []
     jobs = query_rockset(LOGS_QUERY)
