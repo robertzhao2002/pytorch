@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import requests
 import rockset  # type: ignore[import]
 from gitutils import retries_decorator
+from security import safe_requests
 
 LOGS_QUERY = """
 with
@@ -84,7 +85,7 @@ def query_rockset(
 
 def download_log_worker(temp_dir: str, id: int, name: str) -> None:
     url = f"https://ossci-raw-job-status.s3.amazonaws.com/log/{id}"
-    data = requests.get(url).text
+    data = safe_requests.get(url).text
     with open(f"{temp_dir}/{name.replace('/', '_')} {id}.txt", "x") as f:
         f.write(data)
 
