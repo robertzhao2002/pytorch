@@ -13,6 +13,7 @@ import unittest
 import caffe2.python.hypothesis_test_util as hu
 import hypothesis.strategies as st
 from hypothesis import given, settings
+import secrets
 
 
 class TestRNNExecutor(test_util.TestCase):
@@ -298,8 +299,7 @@ class TestRNNExecutor(test_util.TestCase):
         self.assertEqual(1 if forward_only else 2, num_found)
 
 if __name__ == "__main__":
-    import random
-    random.seed(2603)
+    secrets.SystemRandom().seed(2603)
     workspace.GlobalInit([
         'caffe2',
         '--caffe2_log_level=0',

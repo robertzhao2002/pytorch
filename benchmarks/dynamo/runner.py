@@ -41,7 +41,6 @@ import tempfile
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from os.path import abspath, exists
-from random import randint
 
 import matplotlib.pyplot as plt
 
@@ -53,6 +52,7 @@ import torch._dynamo
 from matplotlib import rcParams
 from scipy.stats import gmean
 from tabulate import tabulate
+import secrets
 
 rcParams.update({"figure.autolayout": True})
 plt.rc("axes", axisbelow=True)
@@ -570,7 +570,7 @@ def archive_data(archive_name):
 @functools.lru_cache(None)
 def default_archive_name(dtype):
     _, prefix = archive_data(None)
-    return f"{prefix}_performance_{dtype}_{randint(100, 999)}"
+    return f"{prefix}_performance_{dtype}_{secrets.SystemRandom().randint(100, 999)}"
 
 
 def get_archive_name(args, dtype):

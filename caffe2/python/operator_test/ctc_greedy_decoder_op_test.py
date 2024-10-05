@@ -10,6 +10,7 @@ import caffe2.python.serialized_test.serialized_test_util as serial
 import hypothesis.strategies as st
 import numpy as np
 import unittest
+import secrets
 
 
 class TestCTCGreedyDecoderOp(serial.SerializedTestCase):
@@ -146,6 +147,5 @@ class TestCTCGreedyDecoderOp(serial.SerializedTestCase):
 
 
 if __name__ == "__main__":
-    import random
-    random.seed(2603)
+    secrets.SystemRandom().seed(2603)
     unittest.main()

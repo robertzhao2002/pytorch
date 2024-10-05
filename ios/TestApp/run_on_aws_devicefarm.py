@@ -2,7 +2,6 @@
 
 import datetime
 import os
-import random
 import string
 import sys
 import time
@@ -11,6 +10,7 @@ from typing import Any
 
 import boto3
 import requests
+import secrets
 
 POLLING_DELAY_IN_SECOND = 5
 MAX_UPLOAD_WAIT_IN_SECOND = 600
@@ -109,7 +109,7 @@ def main() -> None:
     args = parse_args()
 
     client = boto3.client("devicefarm")
-    unique_prefix = f"{args.name_prefix}-{datetime.date.today().isoformat()}-{''.join(random.sample(string.ascii_letters, 8))}"
+    unique_prefix = f"{args.name_prefix}-{datetime.date.today().isoformat()}-{''.join(secrets.SystemRandom().sample(string.ascii_letters, 8))}"
 
     # Upload the test app
     appfile_arn = upload_file(

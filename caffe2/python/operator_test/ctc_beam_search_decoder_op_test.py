@@ -12,6 +12,7 @@ import hypothesis.strategies as st
 import numpy as np
 
 import unittest
+import secrets
 
 DEFAULT_BEAM_WIDTH = 10
 DEFAULT_PRUNE_THRESHOLD = 0.001
@@ -132,6 +133,5 @@ class TestCTCBeamSearchDecoderOp(serial.SerializedTestCase):
 
 
 if __name__ == "__main__":
-    import random
-    random.seed(2603)
+    secrets.SystemRandom().seed(2603)
     unittest.main()

@@ -1,7 +1,6 @@
 import argparse
 import io
 import os
-import random
 import shlex
 import subprocess
 import time
@@ -18,6 +17,7 @@ from torch.distributed.optim import DistributedOptimizer
 from torch.distributed.rpc import RRef, TensorPipeRpcBackendOptions
 from torch.distributed.rpc.backend_registry import BackendType
 from torch.nn.parallel import DistributedDataParallel as DDP
+import secrets
 
 
 # Config
@@ -149,7 +149,7 @@ def _run_trainer(emb_rref_list, rank):
 
     def get_next_batch(rank):
         for _ in range(10):
-            num_indices = random.randint(20, 50)
+            num_indices = secrets.SystemRandom().randint(20, 50)
             indices = torch.LongTensor(num_indices).random_(0, NUM_EMBEDDINGS)
 
             # Generate offsets.
@@ -159,7 +159,7 @@ def _run_trainer(emb_rref_list, rank):
 
             while start < num_indices:
                 offsets.append(start)
-                start += random.randint(1, 10)
+                start += secrets.SystemRandom().randint(1, 10)
                 batch_size += 1
 
             offsets_tensor = torch.LongTensor(offsets)

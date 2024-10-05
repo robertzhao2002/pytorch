@@ -10,7 +10,7 @@ import caffe2.python.hypothesis_test_util as hu
 import caffe2.python.serialized_test.serialized_test_util as serial
 import hypothesis.strategies as st
 import numpy as np
-import random
+import secrets
 
 
 class TestUtilityOps(serial.SerializedTestCase):
@@ -19,9 +19,9 @@ class TestUtilityOps(serial.SerializedTestCase):
     @settings(deadline=10000)
     def test_slice(self, X, args, gc, dc):
         X = X.astype(dtype=np.float32)
-        dim = random.randint(0, X.ndim - 1)
-        slice_start = random.randint(0, X.shape[dim] - 1)
-        slice_end = random.randint(slice_start, X.shape[dim] - 1)
+        dim = secrets.SystemRandom().randint(0, X.ndim - 1)
+        slice_start = secrets.SystemRandom().randint(0, X.shape[dim] - 1)
+        slice_end = secrets.SystemRandom().randint(slice_start, X.shape[dim] - 1)
         starts = np.array([0] * X.ndim).astype(np.int32)
         ends = np.array([-1] * X.ndim).astype(np.int32)
         starts[dim] = slice_start
