@@ -23,6 +23,7 @@ import torch.distributed as dist
 import torch.nn as nn
 import torch.optim as optim
 import torchvision
+from security import safe_command
 
 
 def allgather_object(obj):
@@ -32,7 +33,7 @@ def allgather_object(obj):
 
 
 def allgather_run(cmd):
-    proc = subprocess.run(shlex.split(cmd), capture_output=True)
+    proc = safe_command.run(subprocess.run, shlex.split(cmd), capture_output=True)
     assert proc.returncode == 0
     return allgather_object(proc.stdout.decode("utf-8"))
 

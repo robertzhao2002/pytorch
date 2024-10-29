@@ -42,6 +42,7 @@ from torch.fx.experimental.symbolic_shapes import (
 from torch.hub import tqdm
 
 from .. import config
+from security import safe_command
 
 log = logging.getLogger(__name__)
 
@@ -359,8 +360,7 @@ def isolate_fails(
     else:
         cmd = ["python", file_name]
 
-    p = subprocess.Popen(
-        cmd,
+    p = safe_command.run(subprocess.Popen, cmd,
         cwd=subdir,
         stdout=stdout,
         stderr=stderr,

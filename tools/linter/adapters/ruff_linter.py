@@ -13,6 +13,7 @@ import subprocess
 import sys
 import time
 from typing import Any, BinaryIO
+from security import safe_command
 
 LINTER_CODE = "RUFF"
 IS_WINDOWS: bool = os.name == "nt"
@@ -71,8 +72,7 @@ def _run_command(
     start_time = time.monotonic()
     try:
         if input is not None:
-            return subprocess.run(
-                args,
+            return safe_command.run(subprocess.run, args,
                 capture_output=True,
                 shell=False,
                 input=input,
@@ -81,8 +81,7 @@ def _run_command(
                 cwd=cwd,
             )
 
-        return subprocess.run(
-            args,
+        return safe_command.run(subprocess.run, args,
             stdin=stdin,
             capture_output=True,
             shell=False,
