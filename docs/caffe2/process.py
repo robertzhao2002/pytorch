@@ -10,7 +10,7 @@ import shutil
 # Module caffe2...caffe2.python.control_test
 def insert(originalfile, first_line, description):
     with open(originalfile) as f:
-        f1 = f.readline()
+        f1 = f.readline(5_000_000)
         if f1.find(first_line) < 0:
             docs = first_line + description + f1
             with open("newfile.txt", "w") as f2:
