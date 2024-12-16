@@ -212,8 +212,8 @@ headers = {"Authorization": f"token {token}"}
 
 def run_query(query):
     request = requests.post(
-        "https://api.github.com/graphql", json={"query": query}, headers=headers
-    )
+        "https://api.github.com/graphql", json={"query": query}, headers=headers, 
+    timeout=60)
     if request.status_code == 200:
         return request.json()
     else:
