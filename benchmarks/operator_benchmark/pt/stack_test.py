@@ -1,9 +1,9 @@
-import random
 from typing import List
 
 import torch
 
 import operator_benchmark as op_bench
+import secrets
 
 
 """Microbenchmarks for Stack operator"""
@@ -59,7 +59,7 @@ stack_configs_multidim = op_bench.config_list(
 
 class StackBenchmark(op_bench.TorchBenchmarkBase):
     def init(self, sizes, N, dim, device):
-        random.seed(42)
+        secrets.SystemRandom().seed(42)
         inputs = []
         gen_sizes = []
         if type(sizes) == list and N == -1:

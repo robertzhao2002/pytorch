@@ -1,6 +1,5 @@
 import argparse
 import itertools
-import random
 
 import warnings
 from dataclasses import dataclass
@@ -14,6 +13,7 @@ import torch.utils.benchmark as benchmark
 from prettytable import PrettyTable
 from torch.backends.cuda import sdp_kernel
 from tqdm import tqdm
+import secrets
 
 warnings.filterwarnings("ignore")
 
@@ -168,11 +168,11 @@ def generate_rand_batch(
         )
     # Really slow but should work
     seq_len_list = [
-        int(max_sequence_len * (1 - random.gauss(pad_percentage, 0.01)))
+        int(max_sequence_len * (1 - secrets.SystemRandom().gauss(pad_percentage, 0.01)))
         for _ in range(batch_size)
     ]
     # Make random ele max length
-    seq_len_list[random.randint(0, batch_size - 1)] = max_sequence_len
+    seq_len_list[secrets.SystemRandom().randint(0, batch_size - 1)] = max_sequence_len
     # print(f"Theoretical padding: {pad_percentage} actual: {1 - (sum(seq_len_list) / (batch_size * max_sequence_len))}")
     return (
         torch.nested.nested_tensor(

@@ -1,7 +1,6 @@
 import argparse
 import math
 import pickle
-import random
 from dataclasses import dataclass
 from itertools import chain
 from pathlib import Path
@@ -15,6 +14,7 @@ import torch.nn.functional as F
 import torchtext
 from torchtext.functional import to_tensor
 from tqdm import tqdm
+import secrets
 
 
 XLMR_BASE = torchtext.models.XLMR_BASE_ENCODER
@@ -293,7 +293,7 @@ def balance_dataset(dataset: List):
     rus = RandomOverSampler(random_state=42)
     X, y = rus.fit_resample(inpt_data, category)
     merged = list(zip(X, y))
-    merged = random.sample(merged, k=2 * len(dataset))
+    merged = secrets.SystemRandom().sample(merged, k=2 * len(dataset))
     X, y = zip(*merged)
     rebuilt_dataset = []
     for i in range(len(X)):
@@ -354,7 +354,7 @@ def train(save_path: Path, data_folder: Path, regen_data: bool, resample: bool):
 
     for i in tqdm(range(num_epochs), desc="Epochs"):
         start = 0
-        random.shuffle(train_zip_list)
+        secrets.SystemRandom().shuffle(train_zip_list)
         while start < data_size:
             end = start + batch_size
             # make the last batch bigger if needed

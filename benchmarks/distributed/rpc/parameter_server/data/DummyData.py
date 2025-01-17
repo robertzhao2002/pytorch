@@ -1,9 +1,9 @@
-import random
 
 import numpy as np
 
 import torch
 from torch.utils.data import Dataset
+import secrets
 
 
 class DummyData(Dataset):
@@ -32,11 +32,11 @@ class DummyData(Dataset):
             precentage_of_elements = (100 - self.sparsity_percentage) / float(100)
             index_count = int(self.max_val * precentage_of_elements)
             elements = list(range(self.max_val))
-            random.shuffle(elements)
+            secrets.SystemRandom().shuffle(elements)
             elements = elements[:index_count]
             data = [
                 [
-                    elements[random.randint(0, index_count - 1)]
+                    elements[secrets.SystemRandom().randint(0, index_count - 1)]
                     for _ in range(self.input_dim)
                 ]
                 for _ in range(self.input_samples)

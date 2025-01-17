@@ -4,7 +4,6 @@ import itertools
 import functools
 import copy
 import operator
-import random
 import unittest
 import math
 import enum
@@ -141,6 +140,7 @@ from torch.testing._internal.opinfo.definitions.sparse import (
     error_inputs_sparse_reduction_sum,
     sample_inputs_sparse_reduction_sum
 )
+import secrets
 
 if TEST_SCIPY:
     from scipy import stats
@@ -6350,7 +6350,7 @@ def sample_inputs_cross_entropy(op_info, device, dtype, requires_grad, **kwargs)
 
             if "ignore_index" in kwargs and torch.all(target == kwargs["ignore_index"]):
                 # make sure at least one item in target is not ignored
-                target[0] = random.sample(sorted(set(range(num_classes)) - {kwargs["ignore_index"]}), 1)[0]
+                target[0] = secrets.SystemRandom().sample(sorted(set(range(num_classes)) - {kwargs["ignore_index"]}), 1)[0]
 
         yield SampleInput(input, target, **kwargs)
 
@@ -7408,7 +7408,7 @@ def sample_inputs_where(op_info, device, dtype, requires_grad, **kwargs):
 
         if mask_t.sum() == 0:
             def random_index(shape):
-                return tuple(random.randrange(0, max_idx) for max_idx in shape)
+                return tuple(secrets.SystemRandom().randrange(0, max_idx) for max_idx in shape)
 
             mask_t[random_index(mask_t.shape)] = True
             return mask_t
@@ -7973,7 +7973,7 @@ def sample_inputs_cosine_embedding_loss(op_info, device, dtype, requires_grad, *
         yield SampleInput(
             make_input(s),
             args=(make_input(s), make_target(s)),
-            kwargs=dict(reduction=r, margin=random.uniform(-1, 1))
+            kwargs=dict(reduction=r, margin=secrets.SystemRandom().uniform(-1, 1))
         )
 
 def sample_inputs_ctc_loss(op_info, device, dtype, requires_grad, **kwargs):
@@ -8128,11 +8128,11 @@ def sample_inputs_gaussian_nll_loss(op_info, device, dtype, requires_grad, **kwa
                 )
                 yield (
                     _make_tensor(s), _make_tensor(t_s), make_var(v_s),
-                    dict(eps=random.uniform(1e-6, 1e-3), reduction=r)
+                    dict(eps=secrets.SystemRandom().uniform(1e-6, 1e-3), reduction=r)
                 )
                 yield (
                     _make_tensor(s), _make_tensor(t_s), make_var(v_s),
-                    dict(full=True, eps=random.uniform(1e-6, 1e-3), reduction=r)
+                    dict(full=True, eps=secrets.SystemRandom().uniform(1e-6, 1e-3), reduction=r)
                 )
 
     for input, target, var, kwargs in gen_shape_kwargs():
@@ -8167,7 +8167,7 @@ def sample_inputs_hinge_embedding_loss(op_info, device, dtype, requires_grad, **
         mask = torch.rand_like(target) > 0.5
         target[mask] = 1
         target[~mask] = -1
-        d['margin'] = random.uniform(-9, 9)
+        d['margin'] = secrets.SystemRandom().uniform(-9, 9)
         yield SampleInput(input, args=(target, ), kwargs=d)
 
     # scalar input and target.
@@ -8215,7 +8215,7 @@ def reference_inputs_hinge_embedding_loss(op, device, dtype, requires_grad, **kw
 
 def sample_inputs_huber_loss(op_info, device, dtype, requires_grad, **kwargs):
     for input, target, d in _generate_sample_inputs_nn_loss(op_info, device, dtype, requires_grad, **kwargs):
-        d['delta'] = random.uniform(1e-3, 9)
+        d['delta'] = secrets.SystemRandom().uniform(1e-3, 9)
         yield SampleInput(input, args=(target, ), kwargs=d)
 
 def error_inputs_huber_loss(op, device, **kwargs):
@@ -8259,7 +8259,7 @@ def sample_inputs_poisson_nll_loss(op_info, device, dtype, requires_grad, **kwar
                     yield (
                         i2, t2,
                         dict(log_input=li, full=f,
-                             eps=random.uniform(1e-8, 1e-3),
+                             eps=secrets.SystemRandom().uniform(1e-8, 1e-3),
                              reduction=r)
                     )
 
@@ -8934,7 +8934,7 @@ class foreach_inputs_sample_func:
         should_use_simpler_scalars = opinfo.name == "_foreach_pow" and dtype in (torch.float16, torch.bfloat16)
 
         def sample_float():
-            s = random.random()
+            s = secrets.SystemRandom().random()
             if should_use_simpler_scalars:
                 return 1.0 if s > 0.5 else 2.0
             else:
@@ -8943,7 +8943,7 @@ class foreach_inputs_sample_func:
         high = 2 if should_use_simpler_scalars else 9
         if rightmost_arg_type == ForeachRightmostArgType.ScalarList:
             return [
-                [random.randint(0, high) + 1 for _ in range(num_tensors)],
+                [secrets.SystemRandom().randint(0, high) + 1 for _ in range(num_tensors)],
                 [sample_float() for _ in range(num_tensors)],
                 [complex(sample_float(), sample_float()) for _ in range(num_tensors)],
                 [True for _ in range(num_tensors)],
@@ -8952,7 +8952,7 @@ class foreach_inputs_sample_func:
             ]
         if rightmost_arg_type == ForeachRightmostArgType.Scalar:
             return (
-                random.randint(1, high + 1),
+                secrets.SystemRandom().randint(1, high + 1),
                 sample_float(),
                 True,
                 complex(sample_float(), sample_float()),
@@ -9129,15 +9129,15 @@ class foreach_lerp_sample_func(foreach_inputs_sample_func):
             return [sample_inputs_foreach(None, device, dtype, num_tensors, **_foreach_inputs_kwargs)]
         if rightmost_arg_type == ForeachRightmostArgType.ScalarList:
             return [
-                [random.randint(0, 9) + 1 for _ in range(num_tensors)],
-                [1.0 - random.random() for _ in range(num_tensors)],
-                [complex(1.0 - random.random(), 1.0 - random.random()) for _ in range(num_tensors)],
+                [secrets.SystemRandom().randint(0, 9) + 1 for _ in range(num_tensors)],
+                [1.0 - secrets.SystemRandom().random() for _ in range(num_tensors)],
+                [complex(1.0 - secrets.SystemRandom().random(), 1.0 - secrets.SystemRandom().random()) for _ in range(num_tensors)],
                 [True for _ in range(num_tensors)],
                 [1, 2.0, 3.0 + 4.5j] + [3.0 for _ in range(num_tensors - 3)],
                 [True, 1, 2.0, 3.0 + 4.5j] + [3.0 for _ in range(num_tensors - 4)],
             ]
         if rightmost_arg_type == ForeachRightmostArgType.Scalar:
-            return [random.random()]
+            return [secrets.SystemRandom().random()]
         raise AssertionError(f"Invalid rightmost_arg_type of {rightmost_arg_type}")
 
 

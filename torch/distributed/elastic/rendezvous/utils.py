@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import ipaddress
-import random
 import re
 import socket
 import time
@@ -13,6 +12,7 @@ import weakref
 from datetime import timedelta
 from threading import Event, Thread
 from typing import Any, Callable, Dict, Optional, Tuple, Union
+import secrets
 
 __all__ = ['parse_rendezvous_endpoint']
 
@@ -172,7 +172,7 @@ def _delay(seconds: Union[float, Tuple[float, float]]) -> None:
             bound within which a random delay will be picked.
     """
     if isinstance(seconds, tuple):
-        seconds = random.uniform(*seconds)
+        seconds = secrets.SystemRandom().uniform(*seconds)
     # Ignore delay requests that are less than 10 milliseconds.
     if seconds >= 0.01:
         time.sleep(seconds)

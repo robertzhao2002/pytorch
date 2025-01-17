@@ -5,6 +5,7 @@
 
 from caffe2.python.models.seq2seq import seq2seq_model_helper
 from caffe2.python import scope, test_util
+import secrets
 
 
 class Seq2SeqModelHelperTest(test_util.TestCase):
@@ -65,6 +66,5 @@ class Seq2SeqModelHelperTest(test_util.TestCase):
 
 if __name__ == "__main__":
     import unittest
-    import random
-    random.seed(2221)
+    secrets.SystemRandom().seed(2221)
     unittest.main()

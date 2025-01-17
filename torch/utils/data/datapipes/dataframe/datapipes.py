@@ -1,9 +1,9 @@
-import random
 
 from torch.utils.data.datapipes._decorator import functional_datapipe
 from torch.utils.data.datapipes.datapipe import DFIterDataPipe, IterDataPipe
 
 from torch.utils.data.datapipes.dataframe import dataframe_wrapper as df_wrapper
+import secrets
 
 __all__ = [
     "ConcatDataFramesPipe",
@@ -68,7 +68,7 @@ class ShuffleDataFramesPipe(DFIterDataPipe):
                 size = df_wrapper.get_len(df)
             for i in range(df_wrapper.get_len(df)):
                 all_buffer.append(df_wrapper.get_item(df, i))
-        random.shuffle(all_buffer)
+        secrets.SystemRandom().shuffle(all_buffer)
         buffer = []
         for df in all_buffer:
             buffer.append(df)
