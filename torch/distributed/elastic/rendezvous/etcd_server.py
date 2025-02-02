@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import time
 from typing import Optional, TextIO, Union
+from security import safe_command
 
 try:
     import etcd  # type: ignore[import]
@@ -211,7 +212,7 @@ class EtcdServer:
 
         sock.close()
         sock_peer.close()
-        self._etcd_proc = subprocess.Popen(etcd_cmd, close_fds=True, stderr=stderr)
+        self._etcd_proc = safe_command.run(subprocess.Popen, etcd_cmd, close_fds=True, stderr=stderr)
         self._wait_for_ready(timeout)
 
     def get_client(self):

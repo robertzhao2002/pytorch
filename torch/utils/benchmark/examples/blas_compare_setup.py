@@ -2,6 +2,7 @@ import collections
 import os
 import shutil
 import subprocess
+from security import safe_command
 
 try:
     # no type stub for conda command line interface
@@ -110,8 +111,7 @@ def main():
         )
 
         print("Testing that env can be activated:")
-        base_source = subprocess.run(
-            f"source activate {env_path}",
+        base_source = safe_command.run(subprocess.run, f"source activate {env_path}",
             shell=True,
             capture_output=True,
             check=False,
@@ -143,8 +143,7 @@ def main():
             print("Setting environment variables.")
 
             # This does not appear to be possible using the python API.
-            env_set = subprocess.run(
-                f"source activate {env_path} && "
+            env_set = safe_command.run(subprocess.run, f"source activate {env_path} && "
                 f"conda env config vars set {' '.join(env_spec.environment_variables)}",
                 shell=True,
                 capture_output=True,
@@ -158,8 +157,7 @@ def main():
                 )
 
             # Check that they were actually set correctly.
-            actual_env_vars = subprocess.run(
-                f"source activate {env_path} && env",
+            actual_env_vars = safe_command.run(subprocess.run, f"source activate {env_path} && env",
                 shell=True,
                 capture_output=True,
                 check=True,
@@ -170,8 +168,7 @@ def main():
         print(f"Building PyTorch for env: `{env_name}`")
         # We have to re-run during each build to pick up the new
         # build config settings.
-        build_run = subprocess.run(
-            f"source activate {env_path} && "
+        build_run = safe_command.run(subprocess.run, f"source activate {env_path} && "
             f"cd {git_root} && "
             "python setup.py install --cmake",
             shell=True,
@@ -180,9 +177,7 @@ def main():
         )
 
         print("Checking configuration:")
-        check_run = subprocess.run(
-            # Shameless abuse of `python -c ...`
-            f"source activate {env_path} && "
+        check_run = safe_command.run(subprocess.run, f"source activate {env_path} && "
             "python -c \""
             "import torch;"
             "from torch.utils.benchmark import Timer;"

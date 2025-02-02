@@ -15,6 +15,7 @@ import torch
 import torch._dynamo
 import torch._dynamo.test_case
 from torch.utils._traceback import report_compile_source_on_error
+from security import safe_command
 
 
 @dataclasses.dataclass
@@ -134,7 +135,7 @@ torch._inductor.config.{"cpp" if device == "cpu" else "triton"}.inject_relu_bug_
                 stderr.getvalue().encode("utf-8"),
             )
         else:
-            return subprocess.run(args, capture_output=True, cwd=cwd, check=False)
+            return safe_command.run(subprocess.run, args, capture_output=True, cwd=cwd, check=False)
 
     # Run `code` in a separate python process.
     # Returns the completed process state and the directory containing the
