@@ -12,6 +12,7 @@ from enum import Enum
 from pathlib import Path
 from sysconfig import get_paths as gp
 from typing import Any, List, NamedTuple, Optional, Pattern
+from security import safe_command
 
 # PyTorch directory root
 result = subprocess.run(
@@ -76,8 +77,7 @@ def run_command(
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(
-            args,
+        return safe_command.run(subprocess.run, args,
             capture_output=True,
             check=False,
         )
@@ -103,8 +103,7 @@ def clang_search_dirs() -> List[str]:
         raise RuntimeError(f"None of {compilers} were found")
     compiler = compilers[0]
 
-    result = subprocess.run(
-        [compiler, "-E", "-x", "c++", "-", "-v"],
+    result = safe_command.run(subprocess.run, [compiler, "-E", "-x", "c++", "-", "-v"],
         stdin=subprocess.DEVNULL,
         capture_output=True,
         check=True,

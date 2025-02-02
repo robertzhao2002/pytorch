@@ -55,6 +55,7 @@ from typing import (
     Tuple,
     TypeVar,
 )
+from security import safe_command
 
 LOGGER: Optional[logging.Logger] = None
 URL_FORMAT = "{base_url}/{platform}/{dist_name}.tar.bz2"
@@ -212,8 +213,7 @@ def check_branch(subcommand: str, branch: Optional[str]) -> Optional[str]:
         return "Branch name to checkout must be supplied with '-b' option"
     # next check that the local repo is clean
     cmd = ["git", "status", "--untracked-files=no", "--porcelain"]
-    p = subprocess.run(
-        cmd,
+    p = safe_command.run(subprocess.run, cmd,
         capture_output=True,
         check=True,
         text=True,
@@ -222,7 +222,7 @@ def check_branch(subcommand: str, branch: Optional[str]) -> Optional[str]:
         return "Need to have clean working tree to checkout!\n\n" + p.stdout
     # next check that the branch name doesn't already exist
     cmd = ["git", "show-ref", "--verify", "--quiet", "refs/heads/" + branch]
-    p = subprocess.run(cmd, capture_output=True, check=False)  # type: ignore[assignment]
+    p = safe_command.run(subprocess.run, cmd, capture_output=True, check=False)  # type: ignore[assignment]
     if not p.returncode:
         return f"Branch {branch!r} already exists"
     return None
@@ -313,7 +313,7 @@ def conda_solve(
     )
     cmd.extend(channel_args)
     cmd.extend(SPECS_TO_INSTALL)
-    p = subprocess.run(cmd, capture_output=True, check=True)
+    p = safe_command.run(subprocess.run, cmd, capture_output=True, check=True)
     # parse solution
     solve = json.loads(p.stdout)
     link = solve["actions"]["LINK"]
@@ -334,11 +334,11 @@ def deps_install(deps: List[str], existing_env: bool, env_opts: List[str]) -> No
     if not existing_env:
         # first remove previous pytorch-deps env
         cmd = ["conda", "env", "remove", "--yes"] + env_opts
-        p = subprocess.run(cmd, check=True)
+        p = safe_command.run(subprocess.run, cmd, check=True)
     # install new deps
     inst_opt = "install" if existing_env else "create"
     cmd = ["conda", inst_opt, "--yes", "--no-deps"] + env_opts + deps
-    p = subprocess.run(cmd, check=True)
+    p = safe_command.run(subprocess.run, cmd, check=True)
 
 
 @timed("Installing pytorch nightly binaries")
@@ -346,7 +346,7 @@ def pytorch_install(url: str) -> "tempfile.TemporaryDirectory[str]":
     """Install pytorch into a temporary directory"""
     pytdir = tempfile.TemporaryDirectory()
     cmd = ["conda", "create", "--yes", "--no-deps", "--prefix", pytdir.name, url]
-    p = subprocess.run(cmd, check=True)
+    p = safe_command.run(subprocess.run, cmd, check=True)
     return pytdir
 
 
@@ -362,13 +362,13 @@ def _site_packages(dirname: str, platform: str) -> str:
 def _ensure_commit(git_sha1: str) -> None:
     """Make sure that we actually have the commit locally"""
     cmd = ["git", "cat-file", "-e", git_sha1 + "^{commit}"]
-    p = subprocess.run(cmd, capture_output=True, check=False)
+    p = safe_command.run(subprocess.run, cmd, capture_output=True, check=False)
     if p.returncode == 0:
         # we have the commit locally
         return
     # we don't have the commit, must fetch
     cmd = ["git", "fetch", "https://github.com/pytorch/pytorch.git", git_sha1]
-    p = subprocess.run(cmd, check=True)
+    p = safe_command.run(subprocess.run, cmd, check=True)
 
 
 def _nightly_version(spdir: str) -> str:
@@ -387,8 +387,7 @@ def _nightly_version(spdir: str) -> str:
     # now cross reference with nightly version
     _ensure_commit(git_version)
     cmd = ["git", "show", "--no-patch", "--format=%s", git_version]
-    p = subprocess.run(
-        cmd,
+    p = safe_command.run(subprocess.run, cmd,
         capture_output=True,
         check=True,
         text=True,
@@ -410,7 +409,7 @@ def checkout_nightly_version(branch: str, spdir: str) -> None:
     """Get's the nightly version and then checks it out."""
     nightly_version = _nightly_version(spdir)
     cmd = ["git", "checkout", "-b", branch, nightly_version]
-    p = subprocess.run(cmd, check=True)
+    p = safe_command.run(subprocess.run, cmd, check=True)
 
 
 @timed("Pulling nightly PyTorch")
@@ -418,7 +417,7 @@ def pull_nightly_version(spdir: str) -> None:
     """Fetches the nightly version and then merges it ."""
     nightly_version = _nightly_version(spdir)
     cmd = ["git", "merge", nightly_version]
-    p = subprocess.run(cmd, check=True)
+    p = safe_command.run(subprocess.run, cmd, check=True)
 
 
 def _get_listing_linux(source_dir: str) -> List[str]:
@@ -539,8 +538,7 @@ def move_nightly_files(spdir: str, platform: str) -> None:
 
 def _available_envs() -> Dict[str, str]:
     cmd = ["conda", "env", "list"]
-    p = subprocess.run(
-        cmd,
+    p = safe_command.run(subprocess.run, cmd,
         check=True,
         capture_output=True,
         text=True,

@@ -9,6 +9,7 @@ from typing import Any
 from itertools import groupby
 import base64
 import warnings
+from security import safe_command
 
 cache = lru_cache(None)
 
@@ -84,7 +85,7 @@ def format_flamegraph(flamegraph_lines, flamegraph_script=None):
             'https://raw.githubusercontent.com/brendangregg/FlameGraph/master/flamegraph.pl', flamegraph_script)
         subprocess.check_call(['chmod', '+x', flamegraph_script])
     args = [flamegraph_script, '--countname', 'bytes']
-    p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding='utf-8')
+    p = safe_command.run(subprocess.Popen, args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding='utf-8')
     assert p.stdin is not None
     assert p.stdout is not None
     p.stdin.write(flamegraph_lines)

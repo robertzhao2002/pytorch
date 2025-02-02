@@ -22,6 +22,7 @@ green, assuming that you have a xterm connection that supports color.
 import argparse
 import subprocess
 import sys
+from security import safe_command
 
 
 class Trie:
@@ -43,8 +44,7 @@ def GetSymbolTrie(target, nm_command, max_depth):
             max_depth: the maximum depth to create the trie.
     """
     # Run nm to get a dump on the strings.
-    proc = subprocess.Popen(
-        [nm_command, '--radix=d', '--size-sort', '--print-size', target],
+    proc = safe_command.run(subprocess.Popen, [nm_command, '--radix=d', '--size-sort', '--print-size', target],
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     nm_out, _ = proc.communicate()
     if proc.returncode != 0:

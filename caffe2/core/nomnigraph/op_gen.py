@@ -8,6 +8,7 @@
 import argparse
 from textwrap import dedent
 from subprocess import call
+from security import safe_command
 
 
 def parse_lines(lines):
@@ -236,10 +237,10 @@ if __name__ == "__main__":
 
     try:
         cmd = ["clang-format", "-i", install_dir + "/OpClasses.h"]
-        call(cmd)
+        safe_command.run(call, cmd)
         cmd = ["clang-format", "-i", install_dir + "/OpNames.h"]
-        call(cmd)
+        safe_command.run(call, cmd)
         cmd = ["clang-format", "-i", install_dir + "/OpEnum.h"]
-        call(cmd)
+        safe_command.run(call, cmd)
     except Exception:
         pass

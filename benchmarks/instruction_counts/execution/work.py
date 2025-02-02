@@ -19,6 +19,7 @@ from worker.main import (
     WorkerTimerArgs,
     WorkerUnpickler,
 )
+from security import safe_command
 
 if TYPE_CHECKING:
     PopenType = subprocess.Popen[bytes]
@@ -81,8 +82,7 @@ class _BenchmarkProcess:
         with open(self._communication_file, "wb") as f:
             pickle.dump(self._work_order.timer_args, f)
 
-        self._proc = subprocess.Popen(
-            self.cmd,
+        self._proc = safe_command.run(subprocess.Popen, self.cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             shell=True,

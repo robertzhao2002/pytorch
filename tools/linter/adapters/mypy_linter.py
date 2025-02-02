@@ -9,6 +9,7 @@ import time
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern
+from security import safe_command
 
 
 IS_WINDOWS: bool = os.name == "nt"
@@ -77,8 +78,7 @@ def run_command(
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(
-            args,
+        return safe_command.run(subprocess.run, args,
             capture_output=True,
         )
     finally:
@@ -97,7 +97,7 @@ severities = {
 def check_mypy_installed(code: str) -> List[LintMessage]:
     cmd = [sys.executable, "-mmypy", "-V"]
     try:
-        subprocess.run(cmd, check=True, capture_output=True)
+        safe_command.run(subprocess.run, cmd, check=True, capture_output=True)
         return []
     except subprocess.CalledProcessError as e:
         msg = e.stderr.decode(errors="replace")

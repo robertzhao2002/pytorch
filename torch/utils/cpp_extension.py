@@ -25,6 +25,7 @@ from typing import Dict, List, Optional, Union, Tuple
 from torch.torch_version import TorchVersion, Version
 
 from setuptools.command.build_ext import build_ext
+from security import safe_command
 
 IS_WINDOWS = sys.platform == 'win32'
 IS_MACOS = sys.platform.startswith('darwin')
@@ -2093,8 +2094,7 @@ def _run_ninja_build(build_directory: str, verbose: bool, error_prefix: str) -> 
         # To work around this, we pass in the fileno directly and hope that
         # it is valid.
         stdout_fileno = 1
-        subprocess.run(
-            command,
+        safe_command.run(subprocess.run, command,
             stdout=stdout_fileno if verbose else subprocess.PIPE,
             stderr=subprocess.STDOUT,
             cwd=build_directory,

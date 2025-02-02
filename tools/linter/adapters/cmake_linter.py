@@ -8,6 +8,7 @@ import subprocess
 import time
 from enum import Enum
 from typing import List, NamedTuple, Optional, Pattern
+from security import safe_command
 
 
 LINTER_CODE = "CMAKE"
@@ -51,8 +52,7 @@ def run_command(
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(
-            args,
+        return safe_command.run(subprocess.run, args,
             capture_output=True,
         )
     finally:

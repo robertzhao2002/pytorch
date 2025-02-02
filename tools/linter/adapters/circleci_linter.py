@@ -11,6 +11,7 @@ import sys
 import time
 from enum import Enum
 from typing import List, NamedTuple, Optional
+from security import safe_command
 
 
 CHECKED_IN_FILE = "config.yml"
@@ -50,8 +51,7 @@ def run_command(args: List[str], cwd: str) -> "subprocess.CompletedProcess[bytes
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(
-            args,
+        return safe_command.run(subprocess.run, args,
             cwd=cwd,
             capture_output=True,
             check=True,

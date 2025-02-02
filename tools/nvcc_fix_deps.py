@@ -17,6 +17,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional, TextIO
+from security import safe_command
 
 
 def resolve_include(path: Path, include_dirs: List[Path]) -> Path:
@@ -94,8 +95,7 @@ def extract_include_arg(include_dirs: List[Path], i: int, args: List[str]) -> No
 
 
 if __name__ == "__main__":
-    ret = subprocess.run(
-        sys.argv[1:], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
+    ret = safe_command.run(subprocess.run, sys.argv[1:], stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
     )
 
     depfile_path = None

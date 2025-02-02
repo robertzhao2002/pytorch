@@ -9,6 +9,7 @@ import textwrap
 from typing import Any, Dict, List
 
 import yaml
+from security import safe_command
 
 
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent
@@ -107,7 +108,7 @@ def commit_ci(files: List[str], message: str) -> None:
             )
 
     # Make the commit
-    subprocess.run(["git", "add"] + files)
+    safe_command.run(subprocess.run, ["git", "add"] + files)
     subprocess.run(["git", "commit", "-m", message])
 
 
