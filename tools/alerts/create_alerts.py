@@ -171,7 +171,7 @@ class JobStatus:
 
 
 def fetch_hud_data(repo: str, branch: str) -> Any:
-    response = requests.get(f"https://hud.pytorch.org/api/hud/{repo}/{branch}/0")
+    response = requests.get(f"https://hud.pytorch.org/api/hud/{repo}/{branch}/0", timeout=60)
     response.raise_for_status()
     hud_data = json.loads(response.text)
     return (hud_data["jobNames"], hud_data["shaGrid"])
