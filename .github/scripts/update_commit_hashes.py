@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from typing import Any, Dict
 
 import requests
+from security import safe_requests
 
 UPDATEBOT_TOKEN = os.environ["UPDATEBOT_TOKEN"]
 PYTORCHBOT_TOKEN = os.environ["PYTORCHBOT_TOKEN"]
@@ -31,7 +32,7 @@ def git_api(
             headers=headers,
         ).json()
     else:
-        return requests.get(
+        return safe_requests.get(
             f"https://api.github.com{url}",
             params=params,
             headers=headers,

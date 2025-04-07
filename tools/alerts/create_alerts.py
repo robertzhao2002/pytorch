@@ -7,9 +7,8 @@ import re
 from collections import defaultdict
 from difflib import SequenceMatcher
 from typing import Any, Dict, List, Set, Tuple
-
-import requests
 from setuptools import distutils  # type: ignore[import]
+from security import safe_requests
 
 ALL_SKIPPED_THRESHOLD = 100
 SIMILARITY_THRESHOLD = 0.75
@@ -171,7 +170,7 @@ class JobStatus:
 
 
 def fetch_hud_data(repo: str, branch: str) -> Any:
-    response = requests.get(f"https://hud.pytorch.org/api/hud/{repo}/{branch}/0")
+    response = safe_requests.get(f"https://hud.pytorch.org/api/hud/{repo}/{branch}/0")
     response.raise_for_status()
     hud_data = json.loads(response.text)
     return (hud_data["jobNames"], hud_data["shaGrid"])
