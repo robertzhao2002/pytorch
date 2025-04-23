@@ -3,13 +3,13 @@ import dis
 import functools
 import logging
 import os.path
-import random
 import re
 import sys
 import types
 import unittest
 from typing import List, Optional, Sequence, Union
 from unittest.mock import patch
+import secrets
 
 np: Optional[types.ModuleType] = None
 try:
@@ -364,7 +364,7 @@ def expectedFailureDynamicWrapper(fn):
 
 def reset_rng_state(use_xla=False):
     torch.manual_seed(1337)
-    random.seed(1337)
+    secrets.SystemRandom().seed(1337)
     if np:
         np.random.seed(1337)
     if use_xla:

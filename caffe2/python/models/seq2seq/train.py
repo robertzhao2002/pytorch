@@ -10,7 +10,6 @@ import collections
 import logging
 import math
 import numpy as np
-import random
 import time
 import sys
 import os
@@ -19,6 +18,7 @@ import caffe2.proto.caffe2_pb2 as caffe2_pb2
 from caffe2.python import core, workspace, data_parallel_model
 import caffe2.python.models.seq2seq.seq2seq_util as seq2seq_util
 from caffe2.python.models.seq2seq.seq2seq_model_helper import Seq2SeqModelHelper
+import secrets
 
 
 logger = logging.getLogger(__name__)
@@ -616,7 +616,7 @@ def gen_batches(source_corpus, target_corpus, source_vocab, target_vocab,
             batch.append(batch[-1])
         assert len(batch) == batch_size
         batches.append(batch)
-    random.shuffle(batches)
+    secrets.SystemRandom().shuffle(batches)
     return batches
 
 
@@ -671,7 +671,7 @@ def run_seq2seq_model(args, model_params=None):
 
 
 def main():
-    random.seed(31415)
+    secrets.SystemRandom().seed(31415)
     parser = argparse.ArgumentParser(
         description='Caffe2: Seq2Seq Training'
     )

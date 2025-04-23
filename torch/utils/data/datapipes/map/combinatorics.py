@@ -3,6 +3,7 @@ import random
 import torch
 from torch.utils.data.datapipes.datapipe import IterDataPipe, MapDataPipe
 from typing import Iterator, List, Optional, TypeVar
+import secrets
 
 __all__ = ["ShufflerIterDataPipe", ]
 
@@ -63,7 +64,7 @@ class ShufflerIterDataPipe(IterDataPipe[T_co]):
         self.indices = list(range(len(datapipe))) if indices is None else indices
         self._enabled = True
         self._seed = None
-        self._rng = random.Random()
+        self._rng = secrets.SystemRandom().Random()
         self._shuffled_indices: List = self.indices
 
     def set_shuffle(self, shuffle=True):
@@ -119,7 +120,7 @@ class ShufflerIterDataPipe(IterDataPipe[T_co]):
             self._valid_iterator_id,
             self._number_of_samples_yielded,
         ) = state
-        self._rng = random.Random()
+        self._rng = secrets.SystemRandom().Random()
         self._rng.setstate(rng_state)
 
 

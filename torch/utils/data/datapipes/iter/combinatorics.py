@@ -5,6 +5,7 @@ from torch.utils.data import Sampler, SequentialSampler
 from torch.utils.data.datapipes._decorator import functional_datapipe
 from torch.utils.data.datapipes.datapipe import IterDataPipe
 from typing import Dict, Iterator, List, Optional, Sized, Tuple, Type, TypeVar
+import secrets
 
 __all__ = [
     "SamplerIterDataPipe",
@@ -112,7 +113,7 @@ class ShufflerIterDataPipe(IterDataPipe[T_co]):
         self.buffer_size = buffer_size
         self._enabled = True
         self._seed = None
-        self._rng = random.Random()
+        self._rng = secrets.SystemRandom().Random()
 
     def set_shuffle(self, shuffle=True):
         self._enabled = shuffle
@@ -176,7 +177,7 @@ class ShufflerIterDataPipe(IterDataPipe[T_co]):
             self._valid_iterator_id,
             self._number_of_samples_yielded,
         ) = state
-        self._rng = random.Random()
+        self._rng = secrets.SystemRandom().Random()
         self._rng.setstate(rng_state)
 
     def __del__(self):

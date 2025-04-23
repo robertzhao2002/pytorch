@@ -9,7 +9,7 @@ import caffe2.python.nomnigraph as ng
 
 from hypothesis import given
 import hypothesis.strategies as st
-import random
+import secrets
 
 
 class TestBindings(test_util.TestCase):
@@ -111,7 +111,7 @@ class TestBindings(test_util.TestCase):
 
     @given(size=st.sampled_from([10, 50]))
     def test_edges_complex(self, size):
-        random.seed(1337)
+        secrets.SystemRandom().seed(1337)
         nn = ng.NNModule()
         dfg = nn.dataFlow
 
@@ -124,7 +124,7 @@ class TestBindings(test_util.TestCase):
 
         for i in range(size):
             for j in range(size):
-                if bool(random.getrandbits(1)):
+                if bool(secrets.SystemRandom().getrandbits(1)):
                     dfg.createEdge(data[i], ops[j])
 
     def test_traversal(self):

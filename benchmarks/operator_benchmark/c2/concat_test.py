@@ -1,10 +1,10 @@
-import random
 
 import benchmark_caffe2 as op_bench_c2
 from benchmark_caffe2 import Caffe2BenchmarkBase  # noqa: F401
 from caffe2.python import core
 
 import operator_benchmark as op_bench
+import secrets
 
 
 """Microbenchmarks for Concat operator. Supports both Caffe2/PyTorch."""
@@ -52,7 +52,7 @@ cat_configs_long = op_bench.config_list(
         [(2**10, 2**10, 2), 2, 2],  # noqa: E241
         [
             [
-                lambda: random.randint(2**6, 2**7),
+                lambda: secrets.SystemRandom().randint(2**6, 2**7),
                 2**7 - 17,
                 2**6 + 1,
             ],  # noqa: E201,E226,E241
@@ -62,7 +62,7 @@ cat_configs_long = op_bench.config_list(
         [
             [
                 2**6 + 2**5,
-                lambda: random.randint(2**6, 2**7),
+                lambda: secrets.SystemRandom().randint(2**6, 2**7),
                 2**6,
             ],  # noqa: E201,E226,E241,E272
             5,
@@ -72,14 +72,14 @@ cat_configs_long = op_bench.config_list(
             [
                 2**7,
                 2**6,
-                lambda: random.randint(2**6, 2**7),
+                lambda: secrets.SystemRandom().randint(2**6, 2**7),
             ],  # noqa: E201,E241,E272
             5,
             2,
         ],
-        [[lambda: random.randint(2**5, 2**6), 2**5, 2**6], 50, 0],  # noqa: E241
+        [[lambda: secrets.SystemRandom().randint(2**5, 2**6), 2**5, 2**6], 50, 0],  # noqa: E241
         [
-            [2**5, lambda: random.randint(2**5, 2**6), 2**6],  # noqa: E241,E272
+            [2**5, lambda: secrets.SystemRandom().randint(2**5, 2**6), 2**6],  # noqa: E241,E272
             50,
             1,
         ],
@@ -87,7 +87,7 @@ cat_configs_long = op_bench.config_list(
             [
                 2**5 + 1,
                 2**6 + 1,
-                lambda: random.randint(2**5, 2**6),
+                lambda: secrets.SystemRandom().randint(2**5, 2**6),
             ],  # noqa: E226,E241,E272
             50,
             2,
@@ -116,10 +116,10 @@ cat_configs_multidim = op_bench.config_list(
 cat_configs_manyinputs = op_bench.config_list(
     attr_names=["sizes", "N", "axis"],
     attrs=[
-        [[lambda: random.randint(1, 10000)], 100, 0],
-        [[lambda: random.randint(1, 1000)], 1000, 0],
-        [[lambda: random.randint(1, 500)], 2000, 0],
-        [[lambda: random.randint(1, 300)], 3000, 0],
+        [[lambda: secrets.SystemRandom().randint(1, 10000)], 100, 0],
+        [[lambda: secrets.SystemRandom().randint(1, 1000)], 1000, 0],
+        [[lambda: secrets.SystemRandom().randint(1, 500)], 2000, 0],
+        [[lambda: secrets.SystemRandom().randint(1, 300)], 3000, 0],
     ],
     cross_product_configs=cross_product_configs,
     tags=["manyinputs"],
@@ -128,7 +128,7 @@ cat_configs_manyinputs = op_bench.config_list(
 
 class ConcatBenchmark(op_bench_c2.Caffe2BenchmarkBase):
     def init(self, sizes, N, axis, add_axis, dtype, device):
-        random.seed(42)
+        secrets.SystemRandom().seed(42)
         self.inputs = []
         self.args = {"axis": axis, "add_axis": add_axis}
         gen_sizes = []

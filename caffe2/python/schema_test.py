@@ -8,7 +8,7 @@ import numpy as np
 
 import unittest
 import pickle
-import random
+import secrets
 
 class TestField(unittest.TestCase):
     def testInitShouldSetEmptyParent(self):
@@ -427,7 +427,7 @@ class TestDB(unittest.TestCase):
             self.assertEqual(sorted(st.field_names()), sorted(rec.field_names()))
             self.assertEqual([str(blob) for blob in rec.field_blobs()],
                              [str('blob:' + name) for name in rec.field_names()])
-            random.shuffle(columns)
+            secrets.SystemRandom().shuffle(columns)
 
     def testStructGet(self):
         net = core.Net('test_net')

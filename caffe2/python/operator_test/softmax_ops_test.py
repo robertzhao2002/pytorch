@@ -11,6 +11,7 @@ import hypothesis.strategies as st
 import numpy as np
 
 import unittest
+import secrets
 
 
 class TestSoftmaxOps(serial.SerializedTestCase):
@@ -679,6 +680,5 @@ class TestSoftmaxOps(serial.SerializedTestCase):
 
 if __name__ == "__main__":
     import unittest
-    import random
-    random.seed(2603)
+    secrets.SystemRandom().seed(2603)
     unittest.main()
