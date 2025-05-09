@@ -10,6 +10,7 @@ from typing import Any, Generator
 from github_utils import gh_post_pr_comment as gh_post_comment
 from gitutils import get_git_remote_name, get_git_repo_dir, GitRepo
 from trymerge import GitHubPR
+from security import safe_command
 
 SAME_SHA_ERROR = (
     "\n```\nAborting rebase because rebasing the branch resulted in the same sha as the target branch.\n"
@@ -86,14 +87,13 @@ def rebase_ghstack_onto(
     pr: GitHubPR, repo: GitRepo, onto_branch: str, dry_run: bool = False
 ) -> bool:
     if (
-        subprocess.run(
-            [sys.executable, "-m", "ghstack", "--help"],
+        safe_command.run(subprocess.run, [sys.executable, "-m", "ghstack", "--help"],
             capture_output=True,
             check=False,
         ).returncode
         != 0
     ):
-        subprocess.run([sys.executable, "-m", "pip", "install", "ghstack"], check=True)
+        safe_command.run(subprocess.run, [sys.executable, "-m", "pip", "install", "ghstack"], check=True)
     orig_ref = f"{re.sub(r'/head$', '/orig', pr.head_ref())}"
 
     repo.fetch(orig_ref, orig_ref)

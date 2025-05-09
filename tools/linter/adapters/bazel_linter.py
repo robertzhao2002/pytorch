@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 from enum import Enum
 from typing import List, NamedTuple, Optional, Set
 from urllib.parse import urlparse
+from security import safe_command
 
 
 LINTER_CODE = "BAZEL_LINTER"
@@ -63,8 +64,7 @@ def get_disallowed_checksums(
     Return the set of disallowed checksums from all http_archive rules
     """
     # Use bazel to get the list of external dependencies in XML format
-    proc = subprocess.run(
-        [binary, "query", "kind(http_archive, //external:*)", "--output=xml"],
+    proc = safe_command.run(subprocess.run, [binary, "query", "kind(http_archive, //external:*)", "--output=xml"],
         capture_output=True,
         check=True,
         text=True,

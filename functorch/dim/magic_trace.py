@@ -7,6 +7,7 @@ import os
 import signal
 import subprocess
 from contextlib import contextmanager
+from security import safe_command
 
 
 @contextmanager
@@ -25,7 +26,7 @@ def magic_trace(output="trace.fxt", magic_trace_cache="/tmp/magic-trace"):
         )
         subprocess.run(["chmod", "+x", magic_trace_cache])
     args = [magic_trace_cache, "attach", "-pid", str(pid), "-o", output]
-    p = subprocess.Popen(args, stderr=subprocess.PIPE, encoding="utf-8")
+    p = safe_command.run(subprocess.Popen, args, stderr=subprocess.PIPE, encoding="utf-8")
     while True:
         x = p.stderr.readline()
         print(x)
