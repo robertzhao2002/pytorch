@@ -373,7 +373,7 @@ def main() -> None:
         variable_start_string="!{{",
         loader=jinja2.FileSystemLoader(str(GITHUB_DIR.joinpath("templates"))),
         undefined=jinja2.StrictUndefined,
-    )
+    autoescape=True)
 
     # not ported yet
     template_and_workflows = [
