@@ -617,7 +617,7 @@ class Parser:
     def has_header(self, output_filename):
         header_present = False
         with open(output_filename) as f:
-            line = f.readline()
+            line = f.readline(5_000_000)
             if "dev" in line:
                 header_present = True
         return header_present
