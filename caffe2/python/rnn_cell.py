@@ -9,7 +9,6 @@ import functools
 import inspect
 import logging
 import numpy as np
-import random
 
 from caffe2.proto import caffe2_pb2
 from caffe2.python.attention import (
@@ -24,6 +23,7 @@ from caffe2.python.modeling.parameter_sharing import ParameterSharing
 from caffe2.python.modeling.parameter_info import ParameterTags
 from caffe2.python.modeling.initializers import Initializer
 from caffe2.python.model_helper import ModelHelper
+import secrets
 
 
 def _RectifyName(blob_reference_or_name):
@@ -1824,7 +1824,7 @@ def cudnn_LSTM(model, input_blob, initial_states, dim_in, dim_out,
                 [input_blob, hidden_input_blob, cell_input_blob, weights],
                 ["lstm_output", "lstm_hidden_output", "lstm_cell_output",
                  "lstm_rnn_scratch", "lstm_dropout_states"],
-                seed=random.randint(0, 100000),  # TODO: dropout seed
+                seed=secrets.SystemRandom().randint(0, 100000),  # TODO: dropout seed
                 **lstm_args
             )
         model.net.AddExternalOutputs(

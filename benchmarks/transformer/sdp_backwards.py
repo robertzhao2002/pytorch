@@ -1,9 +1,9 @@
-import random
 
 import numpy as np
 import torch
 import torch.utils.benchmark as benchmark
 from torch.profiler import profile, ProfilerActivity, record_function
+import secrets
 
 
 class CompositeMHA(torch.nn.Module):
@@ -169,7 +169,7 @@ def main():
     seed = 123
     np.random.seed(seed)
     torch.manual_seed(seed)
-    random.seed(seed)
+    secrets.SystemRandom().seed(seed)
 
     min_run_time = 10
     batch_size = 64

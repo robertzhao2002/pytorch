@@ -11,7 +11,6 @@ pip install prettytable
 import argparse
 import itertools
 import json
-import random
 
 import warnings
 from collections import defaultdict, OrderedDict
@@ -24,6 +23,7 @@ import torch
 
 from prettytable import PrettyTable
 from tqdm import tqdm
+import secrets
 
 warnings.filterwarnings("ignore")
 
@@ -59,7 +59,7 @@ def run(
     block_size: int,
     seed,
 ):
-    random.seed(seed)
+    secrets.SystemRandom().seed(seed)
     torch.manual_seed(seed)
     np.random.seed(seed)
 
@@ -78,7 +78,7 @@ def run(
     # lengths = [sequence_length] * batch_size
 
     # Ensure one row in the batch of ele has the max_sequence_length
-    lengths[random.randint(0, batch_size - 1)] = sequence_length
+    lengths[secrets.SystemRandom().randint(0, batch_size - 1)] = sequence_length
 
     q = [torch.randn(l, embed_dim, device=device, dtype=dtype) for l in lengths]
     q = torch.nested.nested_tensor(q, device=device, dtype=dtype)

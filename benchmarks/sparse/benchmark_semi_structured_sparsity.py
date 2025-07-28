@@ -1,5 +1,4 @@
 import argparse
-import random
 
 import pandas as pd
 import torch
@@ -7,6 +6,7 @@ import torch.utils.benchmark as benchmark
 from torch import nn
 from torch.sparse import SparseSemiStructuredTensor, to_sparse_semi_structured
 from tqdm import tqdm
+import secrets
 
 
 torch.set_printoptions(
@@ -39,7 +39,7 @@ def rand_sparse_semi_structured_mask(
     """
 
     choices = [[0, 1], [1, 0]]
-    mask_entries = [choice or random.choice(choices) for i in range(r * c // 2)]
+    mask_entries = [choice or secrets.choice(choices) for i in range(r * c // 2)]
 
     return (
         torch.tensor(mask_entries, dtype=dtype, device=device)

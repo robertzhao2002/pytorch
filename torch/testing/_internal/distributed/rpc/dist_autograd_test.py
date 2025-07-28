@@ -2,7 +2,6 @@ import sys
 import threading
 import time
 from enum import Enum
-import random
 import torch
 import torch.nn as nn
 from datetime import timedelta
@@ -24,6 +23,7 @@ from torch.testing._internal.distributed.rpc.rpc_agent_test_fixture import (
     RpcAgentTestFixture,
 )
 from torch.testing._internal.common_distributed import skip_if_lt_x_gpu
+import secrets
 
 
 # Right now we test up to 3-layer nested rpc calls.
@@ -2715,7 +2715,7 @@ class TensorPipeCudaDistAutogradTest(RpcAgentTestFixture):
             input = torch.rand([1000, 10000], device=self.rank, requires_grad=True)
             # Run local autograd
             result = input * 2.0
-            r = random.random()
+            r = secrets.SystemRandom().random()
             loss = result.sum() * r
             loss.backward()
 
