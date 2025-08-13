@@ -134,6 +134,7 @@ from os.path import expanduser
 from typing import Dict, List
 
 from torch.distributed.elastic.multiprocessing import start_processes, Std
+from security import safe_command
 
 format_str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.INFO, format=format_str)
@@ -303,8 +304,7 @@ or /.local/lib/ or /usr/local/lib/ or /usr/local/lib64/ or /usr/lib or /usr/lib6
         numactl_available = False
         try:
             cmd = ["numactl", "-C", "0", "-m", "0", "hostname"]
-            r = subprocess.run(
-                cmd,
+            r = safe_command.run(subprocess.run, cmd,
                 env=os.environ,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,

@@ -7,6 +7,7 @@ import sys
 import time
 from enum import Enum
 from typing import List, NamedTuple, Optional
+from security import safe_command
 
 
 LINTER_CODE = "SHELLCHECK"
@@ -37,8 +38,7 @@ def run_command(
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(
-            args,
+        return safe_command.run(subprocess.run, args,
             capture_output=True,
         )
     finally:

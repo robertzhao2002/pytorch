@@ -9,6 +9,7 @@ import subprocess
 import sys
 import os
 from collections import namedtuple
+from security import safe_command
 
 
 try:
@@ -71,7 +72,7 @@ DEFAULT_PIP_PATTERNS = {
 def run(command):
     """Return (return-code, stdout, stderr)."""
     shell = True if type(command) is str else False
-    p = subprocess.Popen(command, stdout=subprocess.PIPE,
+    p = safe_command.run(subprocess.Popen, command, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE, shell=shell)
     raw_output, raw_err = p.communicate()
     rc = p.returncode

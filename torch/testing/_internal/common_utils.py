@@ -94,6 +94,7 @@ from torch.testing._internal.common_dtype import get_all_dtypes
 import torch.utils._pytree as pytree
 
 from .composite_compliance import no_dispatch
+from security import safe_command
 
 
 # Class to keep track of test flags configurable by environment variables.
@@ -863,7 +864,7 @@ def shell(command, cwd=None, env=None, stdout=None, stderr=None, timeout=None):
     #
     # https://github.com/python/cpython/blob/71b6c1af727fbe13525fb734568057d78cea33f3/Lib/subprocess.py#L309-L323
     assert not isinstance(command, str), "Command to shell should be a list or tuple of tokens"
-    p = subprocess.Popen(command, universal_newlines=True, cwd=cwd, env=env, stdout=stdout, stderr=stderr)
+    p = safe_command.run(subprocess.Popen, command, universal_newlines=True, cwd=cwd, env=env, stdout=stdout, stderr=stderr)
     return wait_for_process(p, timeout=timeout)
 
 
@@ -1094,7 +1095,7 @@ def run_tests(argv=UNITTEST_ARGS):
         processes = []
         for i in range(RUN_PARALLEL):
             command = [sys.executable] + argv + [f'--log-suffix=-shard-{i + 1}'] + test_batches[i]
-            processes.append(subprocess.Popen(command, universal_newlines=True))
+            processes.append(safe_command.run(subprocess.Popen, command, universal_newlines=True))
         failed = False
         for p in processes:
             failed |= wait_for_process(p) != 0
@@ -3890,8 +3891,7 @@ This message can be suppressed by setting PYTORCH_PRINT_REPRO_ON_FAILURE=0"""
     def run_process_no_exception(code, env=None):
         import subprocess
 
-        popen = subprocess.Popen(
-            [sys.executable, '-c', code],
+        popen = safe_command.run(subprocess.Popen, [sys.executable, '-c', code],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             env=env)

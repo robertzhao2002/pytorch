@@ -7,6 +7,7 @@ import time
 import torch
 
 from .runner import get_nn_runners
+from security import safe_command
 
 
 def run_rnn(
@@ -86,8 +87,7 @@ def profile(
 def system(command):
     """Returns (return-code, stdout, stderr)"""
     print(f"[system] {command}")
-    p = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+    p = safe_command.run(subprocess.Popen, command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
     output, err = p.communicate()
     rc = p.returncode
