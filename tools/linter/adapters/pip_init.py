@@ -9,13 +9,14 @@ import sys
 import time
 
 from typing import List
+from security import safe_command
 
 
 def run_command(args: List[str]) -> "subprocess.CompletedProcess[bytes]":
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(args, check=True)
+        return safe_command.run(subprocess.run, args, check=True)
     finally:
         end_time = time.monotonic()
         logging.debug("took %dms", (end_time - start_time) * 1000)

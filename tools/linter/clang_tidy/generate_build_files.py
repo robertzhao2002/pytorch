@@ -2,12 +2,12 @@ import os
 import subprocess
 import sys
 from typing import List
+from security import safe_command
 
 
 def run_cmd(cmd: List[str]) -> None:
     print(f"Running: {cmd}")
-    result = subprocess.run(
-        cmd,
+    result = safe_command.run(subprocess.run, cmd,
         capture_output=True,
     )
     stdout, stderr = (

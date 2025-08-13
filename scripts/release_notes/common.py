@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import requests
+from security import safe_command
 
 
 @dataclass
@@ -144,8 +145,7 @@ def features_to_dict(features):
 
 def run(command):
     """Returns (return-code, stdout, stderr)"""
-    p = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+    p = safe_command.run(subprocess.Popen, command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
     )
     output, err = p.communicate()
     rc = p.returncode
